@@ -8,9 +8,11 @@ import {
     isNarrowAspectRatio,
     makeAspectRatioAware
 } from '../../base/responsive-ui';
-import { isFilmstripVisible } from '../../filmstrip';
 
-import AbstractLabels, { type Props } from './AbstractLabels';
+import AbstractLabels, {
+    _abstractMapStateToProps,
+    type Props
+} from './AbstractLabels';
 import styles from './styles';
 
 /**
@@ -42,6 +44,9 @@ class Labels extends AbstractLabels<Props, *> {
                         JitsiRecordingConstants.mode.STREAM)
                 }
                 {
+                    this._renderTranscribingLabel()
+                }
+                {
                     this._renderVideoQualityLabel()
                 }
             </View>
@@ -50,32 +55,12 @@ class Labels extends AbstractLabels<Props, *> {
 
     _renderRecordingLabel: string => React$Element<*>
 
+    _renderTranscribingLabel: () => React$Element<*>
+
     _renderVideoQualityLabel: () => React$Element<*>
 
 }
 
-/**
- * Maps (parts of) the redux state to the associated
- * {@code Labels}'s props.
- *
- * @param {Object} state - The redux state.
- * @private
- * @returns {{
- *     _filmstripVisible: boolean
- * }}
- */
-function _mapStateToProps(state) {
-    return {
-        /**
-         * The indicator which determines whether the filmstrip is visible.
-         *
-         * @private
-         * @type {boolean}
-         */
-        _filmstripVisible: isFilmstripVisible(state)
-    };
-}
-
-export default connect(_mapStateToProps)(
+export default connect(_abstractMapStateToProps)(
     makeAspectRatioAware(Labels)
 );
