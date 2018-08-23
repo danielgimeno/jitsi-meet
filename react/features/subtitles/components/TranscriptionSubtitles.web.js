@@ -1,68 +1,48 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
-/**
- * The type of the React {@code Component} props of
- * {@link TranscriptionSubtitles}.
- */
-type Props = {
-
-    /**
-     * Map of transcriptMessageID's with corresponding transcriptMessage.
-     */
-    _transcriptMessages: Map<string, Object>,
-
-    /**
-     * Whether local participant is requesting to see subtitles
-     */
-    _requestingSubtitles: Boolean
-};
+import {
+    _abstractMapStateToProps,
+    AbstractSubtitles,
+    type AbstractSubtitlesProps as Props
+} from './AbstractSubtitles';
 
 /**
  * React {@code Component} which can display speech-to-text results from
  * Jigasi as subtitles.
  */
-class TranscriptionSubtitles extends Component<Props> {
+class TranscriptionSubtitles extends AbstractSubtitles<Props> {
 
     /**
-     * Implements React's {@link Component#render()}.
+     * Renders the transcription text.
      *
-     * @inheritdoc
-     * @returns {ReactElement}
+     * @param {string} id - The ID of the transcript message from which the
+     * {@code text} has been created.
+     * @param {string} text - Subtitles text formatted with the participant's
+     * name.
+     * @returns {React$Element} - The React element which displays the text.
+     * @protected
      */
-    render() {
-        if (!this.props._requestingSubtitles
-             || !this.props._transcriptMessages) {
-            return null;
-        }
+    _renderParagraph(id: string, text: string): React$Element<*> {
+        return (
+            <p key = { id }>
+                <span>{ text }</span>
+            </p>
+        );
+    }
 
-        const paragraphs = [];
-
-        for (const [ transcriptMessageID, transcriptMessage ]
-            of this.props._transcriptMessages) {
-            let text;
-
-            if (transcriptMessage) {
-                text = `${transcriptMessage.participantName}: `;
-
-                if (transcriptMessage.final) {
-                    text += transcriptMessage.final;
-                } else {
-                    const stable = transcriptMessage.stable || '';
-                    const unstable = transcriptMessage.unstable || '';
-
-                    text += stable + unstable;
-                }
-                paragraphs.push(
-                    <p key = { transcriptMessageID }>
-                        <span>{ text }</span>
-                    </p>
-                );
-            }
-        }
-
+    /**
+     * Renders the subtitles container.
+     *
+     * @param {Array<React$Element>} paragraphs - An array of elements created
+     * for each subtitle using the {@link _renderParagraph} method.
+     * @returns {React$Element} - The subtitles container.
+     * @protected
+     */
+    _renderSubtitlesContainer(
+            paragraphs: Array<React$Element<*>>): React$Element<*> {
         return (
             <div className = 'transcription-subtitles' >
                 { paragraphs }
@@ -71,26 +51,4 @@ class TranscriptionSubtitles extends Component<Props> {
     }
 }
 
-
-/**
- * Maps the transcriptionSubtitles in the Redux state to the associated
- * props of {@code TranscriptionSubtitles}.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{
- *     _transcriptMessages: Map
- * }}
- */
-function _mapStateToProps(state) {
-    const {
-        _transcriptMessages,
-        _requestingSubtitles
-    } = state['features/subtitles'];
-
-    return {
-        _transcriptMessages,
-        _requestingSubtitles
-    };
-}
-export default connect(_mapStateToProps)(TranscriptionSubtitles);
+export default connect(_abstractMapStateToProps)(TranscriptionSubtitles);

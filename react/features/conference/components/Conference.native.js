@@ -22,6 +22,7 @@ import { ConferenceNotification } from '../../calendar-sync';
 import { FILMSTRIP_SIZE, Filmstrip, isFilmstripVisible } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { NotificationsContainer } from '../../notifications';
+import { TranscriptionSubtitles } from '../../subtitles';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 
 import styles from './styles';
@@ -286,6 +287,7 @@ class Conference extends Component<Props> {
                          */
                         this._renderNotificationsContainer()
                     }
+                    <TranscriptionSubtitles onPress = { this._onClick } />
                     {/*
                       * The Toolbox is in a stacking layer bellow the Filmstrip.
                       */}
